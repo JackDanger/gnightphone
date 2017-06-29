@@ -1,0 +1,41 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "9e41fb5739ddc45ad077b36dbf8cfb9896ec0fafb4c08767f763cb727134c326"
+        },
+        "requires": {},
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "google-api-python-client": {
+            "version": "==1.6.2"
+        },
+        "httplib2": {
+            "version": "==0.10.3"
+        },
+        "oauth2client": {
+            "version": "==4.1.1"
+        },
+        "pyasn1": {
+            "version": "==0.2.3"
+        },
+        "pyasn1-modules": {
+            "version": "==0.0.9"
+        },
+        "rsa": {
+            "version": "==3.4.2"
+        },
+        "six": {
+            "version": "==1.10.0"
+        },
+        "uritemplate": {
+            "version": "==3.0.0"
+        }
+    },
+    "develop": {}
+}
