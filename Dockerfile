@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add --no-cache --update openssh git python3 python3-dev build-base bash
+RUN apk add --no-cache --update openssh git python3 python3-dev build-base bash cron
 RUN pip3 install pipenv
 
 RUN mkdir -p /app

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cd6f738c92e19dcf961052472d487655cbc872dddd9935acd5c0dda6375329a5"
+            "sha256": "cec241df80f2fd6cfcaf89d204e519b2da2b5720a85e1181270f1baab03d97ac"
         },
         "requires": {},
         "sources": [
@@ -20,6 +20,9 @@
         },
         "automat": {
             "version": "==0.6.0"
+        },
+        "blinker": {
+            "version": "==1.4"
         },
         "bugsnag": {
             "version": "==3.1.1"
