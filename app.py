@@ -12,12 +12,15 @@ from datetime import datetime
 from flask import Flask
 from flask import request
 import os
+import bugsnag
+from bugsnag.flask import handle_exceptions
 
 from twilio.rest import Client as Twilio
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+BUGSNAG_API_KEY = os.environ['BUGSNAG_API_KEY']
 TWILIO_FROM_NUMBER = os.environ['TWILIO_FROM_NUMBER']
 TO_NUMBER = os.environ['TO_NUMBER']
 
@@ -87,7 +90,14 @@ def update_next_cell(value):
     print(sent)
 
 
+# Configure Bugsnag
+bugsnag.configure(
+  api_key=BUGSNAG_API_KEY,
+  project_root="/app",
+)
+
 app = Flask(__name__)
+handle_exceptions(app)
 
 
 @app.route('/')
