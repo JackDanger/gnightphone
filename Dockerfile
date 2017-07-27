@@ -1,7 +1,8 @@
 FROM alpine
 
-RUN apk add --no-cache --update openssh git python3 python3-dev build-base bash cron
+RUN apk add --no-cache --update openssh git python3 python3-dev build-base bash curl
 RUN pip3 install pipenv
+
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -20,5 +21,8 @@ EXPOSE 5000
 
 # Cleanup
 RUN rm -rf /.wh /root/.cache /var/cache
+
+# Install a daily task
+RUN echo "20 21 * * * curl localhost:5000/collect-answers" >> /etc/crontabs/root
 
 CMD pipenv run python app.py
