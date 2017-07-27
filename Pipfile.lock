@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ac096b7c751a736754d6b17318623508fabdd59e4452e062208a2bf4aa6bdff3"
+            "sha256": "71a739b1ea84845e6fefd273dda9abde9f565f7d73c53e5d1a17dc60163f7eef"
         },
         "requires": {},
         "sources": [
@@ -12,11 +12,20 @@
         ]
     },
     "default": {
+        "appnope": {
+            "version": "==0.1.0"
+        },
         "attrs": {
             "version": "==17.2.0"
         },
         "automat": {
             "version": "==0.6.0"
+        },
+        "certifi": {
+            "version": "==2017.7.27.1"
+        },
+        "chardet": {
+            "version": "==3.0.4"
         },
         "click": {
             "version": "==6.7"
@@ -24,26 +33,41 @@
         "constantly": {
             "version": "==15.1.0"
         },
+        "decorator": {
+            "version": "==4.1.2"
+        },
         "flask": {
             "version": "==0.12.2"
         },
         "flask-twisted": {
             "version": "==0.1.2"
         },
-        "google-api-python-client": {
-            "version": "==1.6.2"
+        "gspread": {
+            "version": "==0.6.2"
         },
         "httplib2": {
             "version": "==0.10.3"
         },
         "hyperlink": {
-            "version": "==17.2.1"
+            "version": "==17.3.0"
+        },
+        "idna": {
+            "version": "==2.5"
         },
         "incremental": {
             "version": "==17.5.0"
         },
+        "ipython": {
+            "version": "==6.1.0"
+        },
+        "ipython-genutils": {
+            "version": "==0.2.0"
+        },
         "itsdangerous": {
             "version": "==0.24"
+        },
+        "jedi": {
+            "version": "==0.10.2"
         },
         "jinja2": {
             "version": "==2.9.6"
@@ -52,31 +76,70 @@
             "version": "==1.0"
         },
         "oauth2client": {
-            "version": "==4.1.1"
+            "version": "==4.1.2"
         },
         "observable": {
             "version": "==0.3.2"
         },
+        "pexpect": {
+            "version": "==4.2.1"
+        },
+        "pickleshare": {
+            "version": "==0.7.4"
+        },
+        "prompt-toolkit": {
+            "version": "==1.0.15"
+        },
+        "ptyprocess": {
+            "version": "==0.5.2"
+        },
         "pyasn1": {
-            "version": "==0.2.3"
+            "version": "==0.3.1"
         },
         "pyasn1-modules": {
-            "version": "==0.0.9"
+            "version": "==0.0.10"
+        },
+        "pygments": {
+            "version": "==2.2.0"
+        },
+        "pyjwt": {
+            "version": "==1.5.0"
+        },
+        "pysocks": {
+            "version": "==1.6.7"
+        },
+        "pytz": {
+            "version": "==2017.2"
+        },
+        "requests": {
+            "version": "==2.18.2"
         },
         "rsa": {
             "version": "==3.4.2"
         },
         "setuptools": {
-            "version": "==36.0.1"
+            "version": "==36.2.4"
+        },
+        "simplegeneric": {
+            "version": "==0.8.1"
         },
         "six": {
             "version": "==1.10.0"
         },
+        "traitlets": {
+            "version": "==4.3.2"
+        },
+        "twilio": {
+            "version": "==6.4.3"
+        },
         "twisted": {
             "version": "==17.5.0"
         },
-        "uritemplate": {
-            "version": "==3.0.0"
+        "urllib3": {
+            "version": "==1.22"
+        },
+        "wcwidth": {
+            "version": "==0.1.7"
         },
         "werkzeug": {
             "version": "==0.12.2"

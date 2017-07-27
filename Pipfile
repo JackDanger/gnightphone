@@ -3,6 +3,9 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [packages]
-google-api-python-client = "*"
+gspread = "*"
+oauth2client = "*"
 Flask = "*"
 Flask-Twisted = "*"
+twilio = "*"
+ipython = "*"
