@@ -60,11 +60,6 @@ def update_next_cell(value):
     today_row_num = worksheet.findall(date)[0].row
     today = worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
 
-    # If the bedtime is not recorded yet, set it right away. The moment
-    # the person texts back is considered bedtime
-    if not today[-1].value:
-        worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
-
     for index in range(len(header_row)):
         print('index: {}, current value: {}'.format(index, today[index].value))
         # Get the next cell that hasn't been filled in yet
@@ -73,8 +68,7 @@ def update_next_cell(value):
 
             row = today_row_num
             col = index + 2  # There's a leftmost column that's just dates and it's also 1-indexed
-            print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
-            worksheet.update_cell(row, col, value)
+            to_update = (row, col, value,)
             break
 
     # `index` is now the location of the last answered question
@@ -88,6 +82,15 @@ def update_next_cell(value):
             from_=TWILIO_FROM_NUMBER,
             body=next_message)
     print(sent)
+
+    if to_update:
+        print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
+        worksheet.update_cell(*to_update)
+
+    # If the bedtime is not recorded yet, set it right away. The moment
+    # the person texts back is considered bedtime
+    if not today[-1].value:
+        worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
 
 
 # Configure Bugsnag
@@ -132,7 +135,6 @@ def incoming_text(path):
 @app.route('/_status')
 def status():
     return json.dumps({'status': 'ok'}, indent=4), 200
-
 
 if __name__ == "__main__":
     print("starting")
