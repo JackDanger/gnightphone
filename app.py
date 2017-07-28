@@ -59,6 +59,7 @@ def update_next_cell(value):
 
     today_row_num = worksheet.findall(date)[0].row
     today = worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
+    to_update = None
 
     for index in range(len(header_row)):
         print('index: {}, current value: {}'.format(index, today[index].value))
