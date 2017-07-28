@@ -52,10 +52,10 @@ def update_next_cell(value):
     if now.hour < 15:
         # It's past midnight
         date = datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
-        sleep_hour = 24 + now.hour
+        sleep_hour = 24 + now.hour - 7
     else:
         date = now.strftime("%Y-%m-%d")
-        sleep_hour = now.hour
+        sleep_hour = now.hour - 7
 
     today_row_num = worksheet.findall(date)[0].row
     today = worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
