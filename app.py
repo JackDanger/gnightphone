@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 from flask import Flask
 from flask import request
+from flask_twisted import Twisted
 import os
 import bugsnag
 from bugsnag.flask import handle_exceptions
@@ -102,6 +103,7 @@ bugsnag.configure(
 
 app = Flask(__name__)
 handle_exceptions(app)
+twisted = Twisted(app)
 
 
 @app.route('/')
@@ -139,4 +141,4 @@ def status():
 
 if __name__ == "__main__":
     print("starting")
-    app.run(host='0.0.0.0', port=5000)
+    twisted.run(host='0.0.0.0', port=5000, debug=True)
