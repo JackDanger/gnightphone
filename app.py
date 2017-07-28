@@ -48,8 +48,8 @@ header_row = worksheet.range(1, SkipColumns + 1, 1, SkipColumns + NumberOfQuesti
 
 
 def update_next_cell(value):
-    now = datetime.now()
-    if now.hour < 7:
+    now = datetime.utcnow()
+    if now.hour < 15:
         # It's past midnight
         date = datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
         sleep_hour = 24 + now.hour
