@@ -68,7 +68,7 @@ class Spreadsheet():
 
     @cached_property_with_ttl(ttl=60*60)
     def today(self):
-        return self.worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
+        return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SleepHourColumn)
 
 
 spreadsheet = Spreadsheet()
@@ -87,9 +87,9 @@ def update_next_cell(value):
     to_update = None
 
     for index in range(len(spreadsheet.header_row)):
-        print('index: {}, current value: {}'.format(index, today[index].value))
+        print('index: {}, current value: {}'.format(index, spreadsheet.today[index].value))
         # Get the next cell that hasn't been filled in yet
-        if not today[index].value:
+        if not spreadsheet.today[index].value:
             header = spreadsheet.header_row[index]
 
             row = spreadsheet.today_row_num
@@ -115,7 +115,7 @@ def update_next_cell(value):
 
     # If the bedtime is not recorded yet, set it right away. The moment
     # the person texts back is considered bedtime
-    if not today[-1].value:
+    if not spreadsheet.today[-1].value:
         spreadsheet.worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
 
 
