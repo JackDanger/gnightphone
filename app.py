@@ -79,6 +79,7 @@ class Spreadsheet():
     def today_row_num(self):
         return self.worksheet.findall(self.date())[0].row
 
+    @property
     def today(self):
         return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SleepHourColumn)
 
