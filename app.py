@@ -120,7 +120,7 @@ def update_next_cell(value):
     # If the bedtime is not recorded yet, set it right away. The moment
     # the person texts back is considered bedtime
     if not spreadsheet.today[-1].value:
-        spreadsheet.worksheet.update_cell(today_row_num, SleepHourColumn, spreadsheet.sleep_hour())
+        spreadsheet.worksheet.update_cell(spreadsheet.today_row_num, SleepHourColumn, spreadsheet.sleep_hour())
 
 
 # Configure Bugsnag
