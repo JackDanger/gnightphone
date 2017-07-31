@@ -23,6 +23,6 @@ EXPOSE 5000
 RUN rm -rf /.wh /root/.cache /var/cache
 
 # Install a daily task
-RUN echo "20 21 * * * curl localhost:5000/collect-answers" >> /etc/crontabs/root
+RUN echo "21 21 * * * curl localhost:5000/collect-answers" >> /etc/crontabs/root
 
 CMD pipenv run python app.py
