@@ -46,6 +46,19 @@ class Spreadsheet():
     scopes = ['https://spreadsheets.google.com/feeds']
     gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
 
+    def date(self):
+        now = datetime.utcnow()
+        if now.hour < 15:
+            # It's past midnight
+            return datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
+        return now.strftime("%Y-%m-%d")
+
+    def sleep_hour(self):
+        now = datetime.utcnow()
+        if now.hour < 15:
+            return 24 + now.hour - 7
+        return now.hour - 7
+
     @cached_property_with_ttl(ttl=60*60)
     def worksheet(self):
         # Hardcoding the year at boot time. Let's restart this every year, yeah?
@@ -64,7 +77,7 @@ class Spreadsheet():
 
     @cached_property_with_ttl(ttl=60*60)
     def today_row_num(self):
-        return self.worksheet.findall(date)[0].row
+        return self.worksheet.findall(self.date())[0].row
 
     @cached_property_with_ttl(ttl=60*60)
     def today(self):
@@ -75,15 +88,6 @@ spreadsheet = Spreadsheet()
 
 
 def update_next_cell(value):
-    now = datetime.utcnow()
-    if now.hour < 15:
-        # It's past midnight
-        date = datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
-        sleep_hour = 24 + now.hour - 7
-    else:
-        date = now.strftime("%Y-%m-%d")
-        sleep_hour = now.hour - 7
-
     to_update = None
 
     for index in range(len(spreadsheet.header_row)):
@@ -116,7 +120,7 @@ def update_next_cell(value):
     # If the bedtime is not recorded yet, set it right away. The moment
     # the person texts back is considered bedtime
     if not spreadsheet.today[-1].value:
-        spreadsheet.worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
+        spreadsheet.worksheet.update_cell(today_row_num, SleepHourColumn, spreadsheet.sleep_hour())
 
 
 # Configure Bugsnag
