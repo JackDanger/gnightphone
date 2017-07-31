@@ -16,9 +16,12 @@ import os
 import bugsnag
 from bugsnag.flask import handle_exceptions
 
+from cached_property import cached_property_with_ttl
+
 from twilio.rest import Client as Twilio
 
 import gspread
+from gspread.exceptions import RequestError
 from oauth2client.service_account import ServiceAccountCredentials
 
 BUGSNAG_API_KEY = os.environ['BUGSNAG_API_KEY']
@@ -29,23 +32,46 @@ TO_NUMBER = os.environ['TO_NUMBER']
 os.environ['TWILIO_ACCOUNT_SID']
 os.environ['TWILIO_AUTH_TOKEN']
 
-GOOGLE_SHEETS_CREDENTIALS = os.environ['GOOGLE_SHEETS_CREDENTIALS']
-
-# use gsheet_creds to create a client to interact with the Google Drive API
-scopes = ['https://spreadsheets.google.com/feeds']
-# CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
-gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
-
 # Details about our spreadsheet layout
 NumberOfQuestions = 8
 SkipColumns = 1
 SleepHourColumn = SkipColumns + NumberOfQuestions + 1
 
-client = gspread.authorize(gsheet_creds)
-spreadsheet = client.open_by_key("1ri5JklpBiTrFOQ1WiT2nQCGdBIOdq57B37coVDlSzh8")
-# Hardcoding the year at boot time. Let's restart this every year, yeah?
-worksheet = spreadsheet.worksheet(datetime.now().strftime("%Y"))
-header_row = worksheet.range(1, SkipColumns + 1, 1, SkipColumns + NumberOfQuestions)
+GOOGLE_SHEETS_CREDENTIALS = os.environ['GOOGLE_SHEETS_CREDENTIALS']
+
+
+class Spreadsheet():
+
+    # use gsheet_creds to create a client to interact with the Google Drive API
+    scopes = ['https://spreadsheets.google.com/feeds']
+    gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
+
+    @cached_property_with_ttl(ttl=60*60)
+    def worksheet(self):
+        # Hardcoding the year at boot time. Let's restart this every year, yeah?
+        return self.spreadsheet.worksheet(datetime.now().strftime("%Y"))
+
+    def client(self):
+        return gspread.authorize(Spreadsheet.gsheet_creds)
+
+    @cached_property_with_ttl(ttl=60*60)
+    def spreadsheet(self):
+        return self.client().open_by_key("1ri5JklpBiTrFOQ1WiT2nQCGdBIOdq57B37coVDlSzh8")
+
+    @cached_property_with_ttl(ttl=60*60)
+    def header_row(self):
+        return self.worksheet.range(1, SkipColumns + 1, 1, SkipColumns + NumberOfQuestions)
+
+    @cached_property_with_ttl(ttl=60*60)
+    def today_row_num(self):
+        return self.worksheet.findall(date)[0].row
+
+    @cached_property_with_ttl(ttl=60*60)
+    def today(self):
+        return self.worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
+
+
+spreadsheet = Spreadsheet()
 
 
 def update_next_cell(value):
@@ -58,24 +84,22 @@ def update_next_cell(value):
         date = now.strftime("%Y-%m-%d")
         sleep_hour = now.hour - 7
 
-    today_row_num = worksheet.findall(date)[0].row
-    today = worksheet.range(today_row_num, SkipColumns + 1, today_row_num, SleepHourColumn)
     to_update = None
 
-    for index in range(len(header_row)):
+    for index in range(len(spreadsheet.header_row)):
         print('index: {}, current value: {}'.format(index, today[index].value))
         # Get the next cell that hasn't been filled in yet
         if not today[index].value:
-            header = header_row[index]
+            header = spreadsheet.header_row[index]
 
-            row = today_row_num
+            row = spreadsheet.today_row_num
             col = index + 2  # There's a leftmost column that's just dates and it's also 1-indexed
             to_update = (row, col, value,)
             break
 
     # `index` is now the location of the last answered question
-    if index < (len(header_row) - 1):
-        next_message = "{}) {}".format(index + 2, header_row[index + 1].value)
+    if index < (len(spreadsheet.header_row) - 1):
+        next_message = "{}) {}".format(index + 2, spreadsheet.header_row[index + 1].value)
     else:
         next_message = "You're all set. Put your phone away and sleep."
 
@@ -87,12 +111,12 @@ def update_next_cell(value):
 
     if to_update:
         print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
-        worksheet.update_cell(*to_update)
+        spreadsheet.worksheet.update_cell(*to_update)
 
     # If the bedtime is not recorded yet, set it right away. The moment
     # the person texts back is considered bedtime
     if not today[-1].value:
-        worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
+        spreadsheet.worksheet.update_cell(today_row_num, SleepHourColumn, sleep_hour)
 
 
 # Configure Bugsnag
@@ -117,7 +141,7 @@ def root():
 
 @app.route('/collect-answers')
 def collect_answers():
-    first_question = header_row[0].value
+    first_question = spreadsheet.header_row[0].value
     body = "G'night phone! Answer these {} ?s and go to sleep.\n 1) {}".format(
             NumberOfQuestions, first_question)
     sent = Twilio().messages.create(

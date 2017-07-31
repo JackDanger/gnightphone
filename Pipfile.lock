@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cec241df80f2fd6cfcaf89d204e519b2da2b5720a85e1181270f1baab03d97ac"
+            "sha256": "288b460240b36d9cc0109c328bc82467285a6174472be21b8b88576f0fa7511b"
         },
         "requires": {},
         "sources": [
@@ -26,6 +26,9 @@
         },
         "bugsnag": {
             "version": "==3.1.1"
+        },
+        "cached-property": {
+            "version": "==1.3.0"
         },
         "certifi": {
             "version": "==2017.7.27.1"
@@ -124,7 +127,7 @@
             "version": "==3.4.2"
         },
         "setuptools": {
-            "version": "==36.2.4"
+            "version": "==36.2.5"
         },
         "simplegeneric": {
             "version": "==0.8.1"
