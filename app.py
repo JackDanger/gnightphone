@@ -79,7 +79,6 @@ class Spreadsheet():
     def today_row_num(self):
         return self.worksheet.findall(self.date())[0].row
 
-    @cached_property_with_ttl(ttl=60*60)
     def today(self):
         return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SleepHourColumn)
 
@@ -88,8 +87,6 @@ spreadsheet = Spreadsheet()
 
 
 def update_next_cell(value):
-    to_update = None
-
     for index in range(len(spreadsheet.header_row)):
         print('index: {}, current value: {}'.format(index, spreadsheet.today[index].value))
         # Get the next cell that hasn't been filled in yet
@@ -98,8 +95,10 @@ def update_next_cell(value):
 
             row = spreadsheet.today_row_num
             col = index + 2  # There's a leftmost column that's just dates and it's also 1-indexed
-            to_update = (row, col, value,)
-            break
+            
+        print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
+        spreadsheet.worksheet.update_cell(row, col, value)
+        break
 
     # `index` is now the location of the last answered question
     if index < (len(spreadsheet.header_row) - 1):
@@ -112,10 +111,6 @@ def update_next_cell(value):
             from_=TWILIO_FROM_NUMBER,
             body=next_message)
     print(sent)
-
-    if to_update:
-        print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
-        spreadsheet.worksheet.update_cell(*to_update)
 
     # If the bedtime is not recorded yet, set it right away. The moment
     # the person texts back is considered bedtime
