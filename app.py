@@ -96,10 +96,10 @@ def update_next_cell(value):
 
             row = spreadsheet.today_row_num
             col = index + 2  # There's a leftmost column that's just dates and it's also 1-indexed
-            
-        print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
-        spreadsheet.worksheet.update_cell(row, col, value)
-        break
+
+            print('updating "{}" at {},{} with {}'.format(header.value, row, col, value))
+            spreadsheet.worksheet.update_cell(row, col, value)
+            break
 
     # `index` is now the location of the last answered question
     if index < (len(spreadsheet.header_row) - 1):
