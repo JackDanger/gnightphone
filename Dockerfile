@@ -6,8 +6,8 @@ RUN pip3 install pipenv
 
 RUN mkdir -p /app
 WORKDIR /app
-COPY Pipfile  /app/Pipfile
-COPY Pipfile.lock  /app/Pipfile.lock
+COPY Pipfile /app/Pipfile
+COPY Pipfile.lock /app/Pipfile.lock
 RUN pipenv install
 
 ENV APP_DIR /app
