@@ -141,6 +141,9 @@ def root():
 
 @app.route('/collect-answers')
 def collect_answers():
+    """
+    Configured to run every day via: https://cron-job.org
+    """
     first_question = spreadsheet.header_row[0].value
     body = "G'night phone! Answer these {} ?s and go to sleep.\n 1) {}".format(
             NumberOfQuestions, first_question)
