@@ -54,6 +54,7 @@ class Spreadsheet():
             return datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
         return now.strftime("%Y-%m-%d")
 
+    @property
     def sleep_hour(self):
         now = datetime.utcnow()
         if now.hour < 15:
@@ -107,6 +108,9 @@ def update_next_cell(value):
     if index < (len(spreadsheet.header_row) - 1):
         next_message = "{}) {}".format(index + 2, spreadsheet.header_row[index + 1].value)
     else:
+        # If the bedtime is not recorded yet, set it to now.
+        if not spreadsheet.today[-1].value:
+            spreadsheet.worksheet.update_cell(spreadsheet.today_row_num, SleepHourColumn, spreadsheet.sleep_hour)
         next_message = "You're all set. Put your phone away and sleep."
 
     sent = Twilio().messages.create(
@@ -115,10 +119,6 @@ def update_next_cell(value):
             body=next_message)
     print(sent)
 
-    # If the bedtime is not recorded yet, set it right away. The moment
-    # the person texts back is considered bedtime
-    if not spreadsheet.today[-1].value:
-        spreadsheet.worksheet.update_cell(spreadsheet.today_row_num, SleepHourColumn, spreadsheet.sleep_hour())
 
 
 # Configure Bugsnag
