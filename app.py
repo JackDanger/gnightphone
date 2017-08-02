@@ -27,6 +27,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 BUGSNAG_API_KEY = os.environ['BUGSNAG_API_KEY']
 TWILIO_FROM_NUMBER = os.environ['TWILIO_FROM_NUMBER']
 TO_NUMBER = os.environ['TO_NUMBER']
+GOOGLE_SPREADSHEET_ID = os.environ['GOOGLE_SPREADSHEET_ID']
 
 # Ensure the environment has the right credentials
 os.environ['TWILIO_ACCOUNT_SID']
@@ -64,12 +65,13 @@ class Spreadsheet():
         # Hardcoding the year at boot time. Let's restart this every year, yeah?
         return self.spreadsheet.worksheet(datetime.now().strftime("%Y"))
 
+    @property
     def client(self):
         return gspread.authorize(Spreadsheet.gsheet_creds)
 
     @cached_property_with_ttl(ttl=60*60)
     def spreadsheet(self):
-        return self.client().open_by_key("1ri5JklpBiTrFOQ1WiT2nQCGdBIOdq57B37coVDlSzh8")
+        return self.client.open_by_key(GOOGLE_SPREADSHEET_ID)
 
     @cached_property_with_ttl(ttl=60*60)
     def header_row(self):
