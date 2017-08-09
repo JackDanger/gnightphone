@@ -9,6 +9,7 @@ damned phone away until you get the rest you need.
 from __future__ import print_function
 import json
 from datetime import datetime
+import pytz
 from flask import Flask
 from flask import request
 from flask_twisted import Twisted
@@ -38,7 +39,6 @@ NumberOfQuestions = 8
 SkipColumns = 1
 SleepHourColumn = SkipColumns + NumberOfQuestions + 1
 HourOfDayToConsiderCutoffForReportingPreviousDay = 18
-UTCOffset = 7
 
 GOOGLE_SHEETS_CREDENTIALS = os.environ['GOOGLE_SHEETS_CREDENTIALS']
 
@@ -48,24 +48,18 @@ class Spreadsheet():
     # use gsheet_creds to create a client to interact with the Google Drive API
     scopes = ['https://spreadsheets.google.com/feeds']
     gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
+    pst = pytz.timezone('US/Pacific')
 
     @property
     def end_of_day(self):
-        now = datetime.utcnow()
-        if now.hour < :
-            # It's past midnight
+        now = pst.localize(datetime.now())
+        if now.hour < 19:
+            # It's past midnight of the next day
             return datetime(now.year, now.month, now.day-1, now.hour)
 
     @property
     def date(self):
         return self.end_of_day.strftime("%Y-%m-%d")
-
-    @property
-    def sleep_hour(self):
-        now = datetime.utcnow()
-        if now.hour < 15:
-            return 24 + now.hour - 7
-        return now.hour - 7
 
     @cached_property_with_ttl(ttl=60*60)
     def worksheet(self):
