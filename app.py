@@ -86,6 +86,16 @@ class Spreadsheet():
     def today(self):
         return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SleepHourColumn)
 
+    @property
+    def todays_values(self):
+        return [
+           "{}: {}".format(
+               self.header_row[SkipColumns + i].value,
+               self.today[SkipColumns + i].value)
+           for i in range(NumberOfQuestions)
+        ]
+
+
 
 spreadsheet = Spreadsheet()
 
@@ -144,26 +154,33 @@ def collect_answers():
     Configured to run every day via: https://cron-job.org
     """
     first_question = spreadsheet.header_row[0].value
-    body = "G'night phone! Answer these {} ?s and go to sleep.\n 1) {}".format(
+    message = "G'night phone! Answer these {} ?s and go to sleep.\n 1) {}".format(
             NumberOfQuestions, first_question)
-    sent = Twilio().messages.create(
-            to=TO_NUMBER,
-            from_=TWILIO_FROM_NUMBER,
-            body=body)
-    print(sent)
+    print(deliver_text(message))
     return '', 200
 
 
 @app.route('/<path>', methods=['POST'])
 def incoming_text(path):
     message = request.form.get('Body')
-    update_next_cell(message)
+    if message == "?":
+        deliver_text(','.join(spreadsheet.todays_values))
+    else:
+        update_next_cell(message)
     return '', 200
 
 
 @app.route('/_status')
 def status():
     return json.dumps({'status': 'ok'}, indent=4), 200
+
+
+def deliver_text(content):
+    return Twilio().messages.create(
+            to=TO_NUMBER,
+            from_=TWILIO_FROM_NUMBER,
+            body=content)
+
 
 if __name__ == "__main__":
     print("starting")
