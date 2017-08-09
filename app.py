@@ -91,7 +91,7 @@ class Spreadsheet():
         return [
            "{}: {}".format(
                self.header_row[i].value,
-               self.today[i].value)
+               self.today[i].value or "[unset]")
            for i in range(NumberOfQuestions)
         ]
 
@@ -164,7 +164,7 @@ def collect_answers():
 def incoming_text(path):
     message = request.form.get('Body')
     if message == "?":
-        deliver_text(','.join(spreadsheet.todays_values))
+        deliver_text(', '.join(spreadsheet.todays_values))
     else:
         update_next_cell(message)
     return '', 200
