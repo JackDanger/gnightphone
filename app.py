@@ -37,9 +37,8 @@ os.environ['TWILIO_AUTH_TOKEN']
 pst = pytz.timezone('US/Pacific')
 
 # Details about our spreadsheet layout
-NumberOfQuestions = 8
+NumberOfQuestions = 9
 SkipColumns = 1
-SleepHourColumn = SkipColumns + NumberOfQuestions + 1
 HourOfDayToConsiderCutoffForReportingPreviousDay = 18
 
 GOOGLE_SHEETS_CREDENTIALS = os.environ['GOOGLE_SHEETS_CREDENTIALS']
@@ -85,14 +84,14 @@ class Spreadsheet():
 
     @property
     def today(self):
-        return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SleepHourColumn)
+        return self.worksheet.range(self.today_row_num, SkipColumns + 1, self.today_row_num, SkipColumns + NumberOfQuestions)
 
     @property
     def todays_values(self):
         return [
            "{}: {}".format(
-               self.header_row[SkipColumns + i].value,
-               self.today[SkipColumns + i].value)
+               self.header_row[i].value,
+               self.today[i].value)
            for i in range(NumberOfQuestions)
         ]
 
