@@ -37,6 +37,8 @@ os.environ['TWILIO_AUTH_TOKEN']
 NumberOfQuestions = 8
 SkipColumns = 1
 SleepHourColumn = SkipColumns + NumberOfQuestions + 1
+HourOfDayToConsiderCutoffForReportingPreviousDay = 18
+UTCOffset = 7
 
 GOOGLE_SHEETS_CREDENTIALS = os.environ['GOOGLE_SHEETS_CREDENTIALS']
 
@@ -47,12 +49,16 @@ class Spreadsheet():
     scopes = ['https://spreadsheets.google.com/feeds']
     gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
 
-    def date(self):
+    @property
+    def end_of_day(self):
         now = datetime.utcnow()
-        if now.hour < 15:
+        if now.hour < :
             # It's past midnight
-            return datetime(now.year, now.month, now.day-1).strftime("%Y-%m-%d")
-        return now.strftime("%Y-%m-%d")
+            return datetime(now.year, now.month, now.day-1, now.hour)
+
+    @property
+    def date(self):
+        return self.end_of_day.strftime("%Y-%m-%d")
 
     @property
     def sleep_hour(self):
@@ -80,7 +86,7 @@ class Spreadsheet():
 
     @cached_property_with_ttl(ttl=60*60)
     def today_row_num(self):
-        return self.worksheet.findall(self.date())[0].row
+        return self.worksheet.findall(self.date)[0].row
 
     @property
     def today(self):
@@ -105,12 +111,9 @@ def update_next_cell(value):
             break
 
     # `index` is now the location of the last answered question
-    if index < (len(spreadsheet.header_row) - 1):
+    if index < len(spreadsheet.header_row):
         next_message = "{}) {}".format(index + 2, spreadsheet.header_row[index + 1].value)
     else:
-        # If the bedtime is not recorded yet, set it to now.
-        if not spreadsheet.today[-1].value:
-            spreadsheet.worksheet.update_cell(spreadsheet.today_row_num, SleepHourColumn, spreadsheet.sleep_hour)
         next_message = "You're all set. Put your phone away and sleep."
 
     sent = Twilio().messages.create(
