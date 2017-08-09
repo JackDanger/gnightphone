@@ -34,6 +34,8 @@ GOOGLE_SPREADSHEET_ID = os.environ['GOOGLE_SPREADSHEET_ID']
 os.environ['TWILIO_ACCOUNT_SID']
 os.environ['TWILIO_AUTH_TOKEN']
 
+pst = pytz.timezone('US/Pacific')
+
 # Details about our spreadsheet layout
 NumberOfQuestions = 8
 SkipColumns = 1
@@ -48,7 +50,6 @@ class Spreadsheet():
     # use gsheet_creds to create a client to interact with the Google Drive API
     scopes = ['https://spreadsheets.google.com/feeds']
     gsheet_creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(GOOGLE_SHEETS_CREDENTIALS), scopes)
-    pst = pytz.timezone('US/Pacific')
 
     @property
     def end_of_day(self):
