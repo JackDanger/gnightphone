@@ -115,7 +115,7 @@ def update_next_cell(value):
             break
 
     # `index` is now the location of the last answered question
-    if index < len(spreadsheet.header_row):
+    if index + 1 < len(spreadsheet.header_row):
         next_message = "{}) {}".format(index + 2, spreadsheet.header_row[index + 1].value)
     else:
         next_message = "You're all set. Put your phone away and sleep."
